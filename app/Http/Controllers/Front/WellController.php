@@ -73,6 +73,7 @@ class WellController extends Controller
         return $well;
     }
 
+
     public function generatePDF(string $id)
     {
         $options = Option::all();

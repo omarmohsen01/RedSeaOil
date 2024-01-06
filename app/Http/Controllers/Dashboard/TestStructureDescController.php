@@ -11,6 +11,7 @@ use App\Http\Requests\StructureDescRequest;
 use App\Models\Option;
 use App\Models\Structure;
 use App\Models\Structure_description;
+use App\Models\TestStructure;
 use App\Models\TestStructure_description;
 use Illuminate\Http\Request;
 
@@ -60,8 +61,8 @@ class TestStructureDescController extends Controller
      */
     public function edit(string $id)
     {
-        $structure = Structure::with(['test_structure_descriptions.user','test'])->findOrFail($id);
-        return view('dashboard.structureDesc.edit',compact('structure'));
+        $structure = TestStructure::with(['structure_descriptions.user','test'])->findOrFail($id);
+        return view('dashboard.teststructureDesc.edit',compact('structure'));
     }
 
     /**
@@ -85,7 +86,8 @@ class TestStructureDescController extends Controller
 
     public function deleteStructDesc(string $id)
     {
-        $structureDesc=TestStructure_description::find($id);
-        return view('dashboard.structureDesc.delete',compact('structureDesc'));
+
+        $structureDesc= TestStructure_description::find($id);
+        return view('dashboard.teststructureDesc.delete',compact('structureDesc'));
     }
 }

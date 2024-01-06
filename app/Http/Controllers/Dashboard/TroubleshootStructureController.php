@@ -34,7 +34,8 @@ class TroubleshootStructureController extends Controller
     public function create(Request $request)
     {
         $troubleshoot=$request->troubleshoot;
-        return view('dashboard.structure.create',compact('troubleshoot'));
+
+        return view('dashboard.troubleshootstructure.create',compact('troubleshoot'));
     }
 
     /**
@@ -81,6 +82,7 @@ class TroubleshootStructureController extends Controller
     public function deleteStruct(string $id)
     {
         $structure=TroubleshootStructure::find($id);
-        return view('dashboard.structure.delete',compact('structure'));
+
+        return view('dashboard.troubleshootstructure.delete',compact('structure'));
     }
 }

@@ -61,8 +61,8 @@ class TroubleshootStructureDescController extends Controller
      */
     public function edit(string $id)
     {
-        $structure = TroubleshootStructure::with(['troubleshoot_struct_desc.user','troubleshoot'])->findOrFail($id);
-        return view('dashboard.structureDesc.edit',compact('structure'));
+        $structure = TroubleshootStructure::with(['structure_descriptions.user','troubleshoot'])->findOrFail($id);
+        return view('dashboard.troubleshootstructureDesc.edit',compact('structure'));
     }
 
     /**
@@ -87,6 +87,7 @@ class TroubleshootStructureDescController extends Controller
     public function deleteStructDesc(string $id)
     {
         $structureDesc=TroubleshootStructure_description::find($id);
-        return view('dashboard.structureDesc.delete',compact('structureDesc'));
+
+        return view('dashboard.troubleshootstructureDesc.delete',compact('structureDesc'));
     }
 }

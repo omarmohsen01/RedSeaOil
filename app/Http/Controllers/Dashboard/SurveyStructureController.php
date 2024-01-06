@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Interfaces\Dashboard\StructureServiceInterface;
+use App\Http\Controllers\Interfaces\Dashboard\SurveyStructureServiceInterface;
 use App\Http\Requests\StructureDescRequest;
 use App\Models\Option;
 use App\Models\Structure;
@@ -15,7 +16,7 @@ use Throwable;
 class SurveyStructureController extends Controller
 {
     protected $structService;
-    public function __construct(StructureServiceInterface $structService)
+    public function __construct(SurveyStructureServiceInterface $structService)
     {
         $this->structService=$structService;
     }
@@ -33,7 +34,7 @@ class SurveyStructureController extends Controller
     public function create(Request $request)
     {
         $survey=$request->survey;
-        return view('dashboard.structure.create',compact('survey'));
+        return view('dashboard.surveystructure.create',compact('survey'));
     }
 
     /**
@@ -42,7 +43,7 @@ class SurveyStructureController extends Controller
     public function store(StructureDescRequest $request)
     {
         $this->structService->structStore($request);
-        return redirect()->route('surveyStructures.index')
+        return redirect()->route('surveys.index')
             ->with('success','Structure Created Successfully');
     }
 
@@ -80,6 +81,6 @@ class SurveyStructureController extends Controller
     public function deleteStruct(string $id)
     {
         $structure=SurveyStructure::find($id);
-        return view('dashboard.structure.delete',compact('structure'));
+        return view('dashboard.surveystructure.delete',compact('structure'));
     }
 }

@@ -9,6 +9,7 @@ class TroubleshootStructure_description extends Model
 {
     use HasFactory;use HasFactory;
     protected $table='troubleshoot_struct_desc';
+
     protected $fillable=[
         'troubleshoot_struct_id','input','type','is_require','data','user_id'
     ];

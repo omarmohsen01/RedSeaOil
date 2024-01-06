@@ -14,6 +14,12 @@ return new class extends Migration
         Schema::create('troubleshoot_wells', function (Blueprint $table) {
             $table->id();
             $table->foreignId('well_id')->constrained('wells')->cascadeOnDelete();
+            $table->string('name');
+            $table->date('from');
+            $table->date('to');
+            $table->string('well')->nullable();
+            $table->string('rig')->nullable();
+            $table->string('images');
             $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
             $table->enum('published', ['published','as_draft','last_draft'])->default('as_draft');
             $table->timestamps();

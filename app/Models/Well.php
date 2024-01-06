@@ -6,13 +6,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class Well extends Model
 {
     use HasFactory;
     protected $table='wells';
     protected $fillable=[
-        'name','from','to','well','rig','user_id','published'
+        'name','from','to','well','rig','images','user_id','published'
     ];
     public function user()
     {
@@ -37,11 +38,24 @@ class Well extends Model
     }
     public static function createWell($request,$published)
     {
+        if($request->hasFile('images')) {
+
+                try {
+                    $uploadedImages = uploadFiles($request->file('images'));
+
+
+                } catch (\Exception $e) {
+                    // Handle the error (e.g., log it, return a response to the user)
+                    return response()->json(['error' => 'Failed to upload image.'], 500);
+                }
+
+        }
         $well=Well::create([
             'name' => $request->post('name'),
             'from' => $request->post('from'),
             'to' => $request->post('to'),
             'user_id' => Auth::guard('sanctum')->id(),
+            'images' => json_encode($uploadedImages),
             'published'=>($published=='published')?'published':'as_draft',
         ]);
         return $well;

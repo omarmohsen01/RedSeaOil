@@ -34,7 +34,8 @@ class TestStructureController extends Controller
     public function create(Request $request)
     {
         $test=$request->test;
-        return view('dashboard.structure.create',compact('test'));
+
+        return view('dashboard.teststructure.create',compact('test'));
     }
 
     /**
@@ -81,6 +82,7 @@ class TestStructureController extends Controller
     public function deleteStruct(string $id)
     {
         $structure=TestStructure::find($id);
-        return view('dashboard.structure.delete',compact('structure'));
+
+        return view('dashboard.teststructure.delete',compact('structure'));
     }
 }

@@ -13,6 +13,12 @@ use App\Http\Controllers\Dashboard\TestStructureController;
 use App\Http\Controllers\Dashboard\TestWellController;
 use App\Http\Controllers\Dashboard\TroubleshootController;
 use App\Http\Controllers\Dashboard\TroubleshootStructureController;
+use App\Http\Controllers\Dashboard\SurveyRequestController;
+use App\Http\Controllers\Dashboard\SurveyStructureDescController;
+use App\Http\Controllers\Dashboard\TestRequestController;
+use App\Http\Controllers\Dashboard\TestStructureDescController;
+use App\Http\Controllers\Dashboard\TroubleshootRequestController;
+use App\Http\Controllers\Dashboard\TroubleshootStructureDescController;
 use App\Http\Controllers\Dashboard\TroubleshootWellController;
 use App\Http\Controllers\Dashboard\UserController;
 use App\Http\Controllers\Dashboard\WellController;
@@ -55,7 +61,7 @@ Route::group([
             ->name('troubleshoot.delete');
 
 
-        //Routes for (OptionStructure, SurveyStructure, TestStructure, TroubleshootStructure)
+        //Routes for (OptionStructure, SurveyStructure, TestStructure, TroubleshootStructure) and (OptionStructureDesc, SurveyStructureDesc, TestStructureDesc, TroubleshootStructureDesc)
         Route::resource('/structures',StructureController::class)->only(['create','store']);
         Route::get('/structuresDesc/delete/{id}',[StructureController::class,'deleteStruct'])
             ->name('structures.delete');
@@ -76,6 +82,20 @@ Route::group([
         Route::get('/structureDescription/delete/{id}',[StructureDescController::class,'deleteStructDesc'])
             ->name('deleteStructDesc');
 
+        Route::resource('/surveystructuresdesc',SurveyStructureDescController::class)->only(['edit','update']);
+        Route::get('/surveystructureDescription/delete/{id}',[SurveyStructureDescController::class,'deleteStructDesc'])
+            ->name('surveydesc.delete');
+
+        Route::resource('/teststructuresdesc',TestStructureDescController::class)->only(['edit','update']);
+        Route::get('/teststructureDescription/delete/{id}',[TestStructureDescController::class,'deleteStructDesc'])
+            ->name('testdesc.delete');
+
+        Route::resource('/troubleshootstructuresdesc',TroubleshootStructureDescController::class)->only(['edit','update']);
+        Route::get('/troubleshootstructureDescription/delete/{id}',[TroubleshootStructureDescController::class,'deleteStructDesc'])
+            ->name('troubleshootdesc.delete');
+
+
+        //Routes for (Well, SurveyWell, TestWell, TroubleshootWell) & Their PDFs
         Route::resource('/wells',WellController::class);
         Route::get('wells/generatePDF/{id}',[WellController::class,'generatePDF'])
             ->name('wells.generatePDF');
@@ -93,7 +113,20 @@ Route::group([
             ->name('troubleshootwells.generatePDF');
 
 
+        //Routes for (Request, SurveyRequest, TestRequest, TroubleshootRequest)
         Route::resource('/requests',RequestController::class);
         Route::post('/requests/reject/{id}',[RequestController::class,'reject'])
             ->name('requests.reject');
+
+        Route::resource('/surveyrequests',SurveyRequestController::class);
+        Route::post('/survey/requests/reject/{id}',[SurveyRequestController::class,'reject'])
+            ->name('surveyrequests.reject');
+
+        Route::resource('/testrequests',TestRequestController::class);
+        Route::post('/test/requests/reject/{id}',[TestRequestController::class,'reject'])
+            ->name('testrequests.reject');
+
+        Route::resource('/troubleshootrequests',TroubleshootRequestController::class);
+        Route::post('/troubleshoot/requests/reject/{id}',[TroubleshootRequestController::class,'reject'])
+            ->name('troubleshootrequests.reject');
 });

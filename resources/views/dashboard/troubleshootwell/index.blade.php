@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('wells') }}
+            {{ __('Troubleshoot wells') }}
         </h2>
     </x-slot>
 
@@ -50,7 +50,7 @@
                                             Delete</button>
                                         @method('delete')
                                     </form> --}}
-                                    <a href="{{ route('wells.generatePDF',$well->id) }}"
+                                    <a href="{{ route('troubleshootwells.generatePDF',$well->id) }}"
                                         class="btn btn-sm btn-outline-success">PDF</a>
                                 </td>
                             </tr>

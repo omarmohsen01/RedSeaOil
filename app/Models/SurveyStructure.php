@@ -26,7 +26,7 @@ class SurveyStructure extends Model
     public static function createStruct(Request $request)
     {
         $str=SurveyStructure::create([
-            'survey_id'=>$request->survey_id,
+            'survey_id'=>$request->option_id,
             'name'=>$request->structureName
         ]);
         return $str;
@@ -66,7 +66,8 @@ class SurveyStructure extends Model
     public static function UpdateOptionStruc(Request $request,$id)
     {
         $structure=SurveyStructure::findOrfail($id);
-        $structure->survey_id=$request->survey_id;
+
+        $structure->survey_id=$request->option_id;
         $structure->name=$request->structureName;
         return $structure;
     }

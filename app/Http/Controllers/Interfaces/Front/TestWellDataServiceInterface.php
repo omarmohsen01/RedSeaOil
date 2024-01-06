@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Interfaces\Front;
 
 interface TestWellDataServiceInterface
 {
-    public function publishNewTestWell($request,$published);
-    public function publishOldTestWell($request,$published);
+    public function publishNewWell($request,$published);
+    public function publishOldWell($request,$published);
     public function requestToEdit($request,$published,$wellRequest);
 }

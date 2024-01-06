@@ -3,12 +3,15 @@
 namespace App\Http\Controllers\Services\Dashboard;
 
 use App\Http\Controllers\Interfaces\Dashboard\StructureDescServiceInterface;
+
+use App\Http\Controllers\Interfaces\Dashboard\SurveyStructureDescServiceInterface;
 use App\Models\Structure;
 use App\Models\SurveyStructure;
 use Illuminate\Support\Facades\DB;
 use Throwable;
 
-class SurveyStructureDescService implements StructureDescServiceInterface
+
+class SurveyStructureDescService implements SurveyStructureDescServiceInterface
 {
     public $structure;
     public function __construct(SurveyStructure $structure)

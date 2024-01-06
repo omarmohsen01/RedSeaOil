@@ -17,7 +17,8 @@ class SurveyRequest extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function survey_well()
+
+    public function well()
     {
         return $this->belongsTo(SurveyWell::class);
     }

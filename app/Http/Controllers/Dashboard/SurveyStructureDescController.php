@@ -61,8 +61,8 @@ class SurveyStructureDescController extends Controller
      */
     public function edit(string $id)
     {
-        $structure = SurveyStructure::with(['survey_structure_descriptions.user','survey'])->findOrFail($id);
-        return view('dashboard.structureDesc.edit',compact('structure'));
+        $structure = SurveyStructure::with(['structure_descriptions.user','survey'])->findOrFail($id);
+        return view('dashboard.surveystructureDesc.edit',compact('structure'));
     }
 
     /**
@@ -86,7 +86,7 @@ class SurveyStructureDescController extends Controller
 
     public function deleteStructDesc(string $id)
     {
-        $structureDesc=SurveyStructure_description::find($id);
-        return view('dashboard.structureDesc.delete',compact('structureDesc'));
+        $structureDesc= SurveyStructure_description::find($id);
+        return view('dashboard.surveystructureDesc.delete',compact('structureDesc'));
     }
 }

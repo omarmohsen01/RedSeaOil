@@ -10,7 +10,7 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <form style="margin-bottom: 20px" action="{{ URL::current() }}" method="get" class="d-flex justify-content-between mbl-4 ml-10">
                 <x-forms.input name="name" placeholder="Name" class="mx-2" :value="request('name')"/>
-                <x-forms.input name="email" placeholder="Eamil" class="mx-2" :value="request('email')"/>
+                <x-forms.input name="email" placeholder="Email" class="mx-2" :value="request('email')"/>
                 <select name="type" class="form-control mx-2" aria-placeholder="Type">
                     <option value="">All</option>
                     <option value="SUPER_ADMIN" @selected(request('type')=='SUPER_ADMIN')>Super Admin</option>

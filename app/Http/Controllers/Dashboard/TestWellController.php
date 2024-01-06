@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Dashboard;
 use App\Http\Controllers\Controller;
 use App\Models\Option;
 use App\Models\Test;
+use App\Models\TestWell;
 use App\Models\Well;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;

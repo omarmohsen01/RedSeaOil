@@ -9,7 +9,7 @@ class TestRequest extends Model
 {
     use HasFactory;
     protected $fillable = [
-        "user_id","test_well_id","description","status"
+        "user_id","tets_well_id","description","status"
     ];
 
     public function user()
@@ -17,7 +17,7 @@ class TestRequest extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function test_well()
+    public function well()
     {
         return $this->belongsTo(TestWell::class);
     }

@@ -26,7 +26,7 @@ class TroubleshootStructure extends Model
     public static function createStruct(Request $request)
     {
         $str=TroubleshootStructure::create([
-            'troubleshoot_id'=>$request->troubleshoot_id,
+            'troubleshoot_id'=>$request->option_id,
             'name'=>$request->structureName
         ]);
         return $str;
@@ -66,7 +66,7 @@ class TroubleshootStructure extends Model
     public static function UpdateOptionStruc(Request $request,$id)
     {
         $structure=TroubleshootStructure::findOrfail($id);
-        $structure->troubleshoot_id=$request->troubleshoot_id;
+        $structure->troubleshoot_id=$request->option_id;
         $structure->name=$request->structureName;
         return $structure;
     }

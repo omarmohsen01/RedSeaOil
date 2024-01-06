@@ -5,17 +5,34 @@ namespace App\Http\Controllers\Front;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Interfaces\Front\SurveyWellDataServiceInterface;
 use App\Models\SurveyRequest;
+use App\Http\Controllers\Interfaces\Front\WellDataServiceInterface;
+use App\Http\Requests\PublishSurveyWellRequest;
+use App\Http\Requests\PublishWellRequest;
+use App\Models\Request as ModelsRequest;
+use App\Models\Structure;
+use App\Models\Structure_description;
+use App\Models\SurveyStructure;
+use App\Models\SurveyStructure_description;
+use App\Models\SurveyWell;
+use App\Models\SurveyWell_data;
+use App\Models\Well;
+use App\Models\Well_data;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Throwable;
 
 
+
 class SurveyWellDataController extends Controller
 {
-    public $surveyWellDataService;
-    public function __construct(SurveyWellDataServiceInterface $surveyWellDataService)
+    public $well,$well_data,$structure,$structure_description,$wellDataService;
+    public function __construct(SurveyWell $well,SurveyWell_data $well_data,SurveyStructure $structure,SurveyStructure_description $structure_description,SurveyWellDataServiceInterface $wellDataService)
     {
-        $this->surveyWellDataService=$surveyWellDataService;
+        $this->well=$well;
+        $this->well_data=$well_data;
+        $this->wellDataService=$wellDataService;
+        $this->structure=$structure;
+        $this->structure_description=$structure_description;
     }
     /**
      * Display a listing of the resource.
@@ -25,15 +42,15 @@ class SurveyWellDataController extends Controller
 
     }
 
-    public function store(Request $request)
+    public function store(PublishSurveyWellRequest $request)
     {
         try{
-            if(isset($request->survey_well_id)){
-                $this->surveyWellDataService->publishOldSurveyWell($request,'published');
-                return response()->json(['message' => 'Survey Well Created Successfully'], 200);
+            if(isset($request->well_id)){
+                $this->wellDataService->publishOldWell($request,'published');
+                return response()->json(['message' => 'Well Created Successfully'], 200);
             }else{
-                $this->surveyWellDataService->publishNewSurveyWell($request,'published');
-                return response()->json(['message' => 'Survey Well Created Successfully'], 200);
+                $this->wellDataService->publishNewWell($request,'published');
+                return response()->json(['message' => 'Well Created Successfully'], 200);
             }
         }catch (Throwable $e) {
             DB::rollBack();
@@ -54,6 +71,17 @@ class SurveyWellDataController extends Controller
         //         }
         //         return response()->json($well_data,200);
         // }
+        $well=$this->well->where('id',$id)->where('published','as_draft')->first();
+        if(!$well){
+            return response()->json(['message'=> 'this well is already published'],404);
+        }else{
+            $well_data=$this->well_data->where('well_id',$well->id)
+                ->with(['well','Structure_description'])->get();
+                if(!$well_data){
+                    return response()->json(['message' => 'Well Not Found'], 404);
+                }
+                return response()->json($well_data,200);
+        }
     }
 
     /**
@@ -64,9 +92,10 @@ class SurveyWellDataController extends Controller
         $wellRequest=SurveyRequest::with('survey_well.well_data')->where('id',$id)->where('status','accept')->first();
         if($wellRequest)
         {
-            $this->surveyWellDataService->requestToEdit($request,'published',$wellRequest);
+            $this->wellDataService->requestToEdit($request,'published',$wellRequest);
             $wellRequest->delete();
             return response()->json(['message' => 'Survey Well Updated Successfully'], 200);
+
         }else{
             return response()->json(['message' => 'Request Have been Rejected,Or Something Wrong Happened'], 200);
         }
@@ -80,14 +109,15 @@ class SurveyWellDataController extends Controller
     {
         //
     }
-    public function saveDraft(Request $request)
+
+    public function saveDraft(PublishSurveyWellRequest $request)
     {
         try{
-            if(isset($request->survey_well_id)){
-                $this->surveyWellDataService->publishOldSurveyWell($request,'as_draft');
+            if(isset($request->well_id)){
+                $this->wellDataService->publishOldWell($request,'as_draft');
                 return response()->json(['message' => 'Well Created Successfully'], 200);
             }else{
-                $this->surveyWellDataService->publishNewSurveyWell($request,'as_draft');
+                $this->wellDataService->publishNewWell($request,'as_draft');
                 return response()->json(['message' => 'Well Created Successfully'], 200);
             }
         }catch (Throwable $e) {

@@ -26,49 +26,51 @@ class SurveyWell_data extends Pivot
         return $this->belongsTo(SurveyWell::class,'survey_well_id');
     }
 
-    public static function createStringIntBoolList($surveyWell,$surveyDataInput,$data)
+    public static function createStringIntBoolList($well,$wellDataInput,$data)
     {
         SurveyWell_data::create([
-            'survey_well_id'=>$surveyWell->id,
-            'survey_structure_description_id'=> $surveyDataInput,
+            'survey_well_id'=>$well->id,
+            'survey_structure_description_id'=> $wellDataInput,
             'data'=> json_encode($data)
         ]);
     }
 
-    public static function createMultiTextWithInput($surveyDataInput,$surveyWell)
+
+    public static function createMultiTextWithInput($wellDataInput,$well)
     {
         $data = [
-            'pi' => $surveyDataInput['data']['Pi'],
-            'Pd' => $surveyDataInput['data']['Pd'],
-            'Ti' => $surveyDataInput['data']['Ti'],
-            'Tm' => $surveyDataInput['data']['Tm'],
-            'Ct' => $surveyDataInput['data']['Ct'],
+            'pi' => $wellDataInput['data']['Pi'],
+            'Pd' => $wellDataInput['data']['Pd'],
+            'Ti' => $wellDataInput['data']['Ti'],
+            'Tm' => $wellDataInput['data']['Tm'],
+            'Ct' => $wellDataInput['data']['Ct'],
         ];
         $struct_desc=SurveyStructure_description::create([
-            'structure_id'=>$surveyDataInput['survey_structure_id'],
-            'input'=>$surveyDataInput['input'],
+            'structure_id'=>$wellDataInput['structure_id'],
+            'input'=>$wellDataInput['input'],
             'type'=>'MultiText',
             'user_id'=> Auth::guard('sanctum')->id()
         ]);
         SurveyWell_data::create([
-            'survey_well_id'=>$surveyWell->id,
+            'survey_well_id'=>$well->id,
             'survey_structure_description_id'=>$struct_desc->id,
             'data' => json_encode($data)
         ]);
     }
 
-    public static function createDateInputWithData($surveyDataInput, $surveyWell)
+
+    public static function createDateInputWithData($wellDataInput, $well)
     {
         $struct_desc=SurveyStructure_description::create([
-            'survey_structure_id'=>$surveyDataInput['survey_structure_id'],
-            'input'=>$surveyDataInput['input'],
+            'survey_structure_id'=>$wellDataInput['structure_id'],
+            'input'=>$wellDataInput['input'],
             'type'=>'String',
             'user_id'=> Auth::guard('sanctum')->id()
         ]);
         SurveyWell_data::create([
-            'survey_well_id'=>$surveyWell->id,
+            'survey_well_id'=>$well->id,
             'survey_structure_description_id'=>$struct_desc->id,
-            'data' => json_encode($surveyDataInput['data'])
+            'data' => json_encode($wellDataInput['data'])
         ]);
     }
 

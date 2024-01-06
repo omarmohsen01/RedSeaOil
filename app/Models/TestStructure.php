@@ -26,7 +26,7 @@ class TestStructure extends Model
     public static function createStruct(Request $request)
     {
         $str=TestStructure::create([
-            'test_id'=>$request->test_id,
+            'test_id'=>$request->option_id,
             'name'=>$request->structureName
         ]);
         return $str;
@@ -36,7 +36,7 @@ class TestStructure extends Model
         if(isset($request->structuresDes)){
             foreach($request->structuresDes as $type=>$struc){
                 TestStructure_description::updateOrcreate([
-                    'structure_id'=>$id,
+                    'test_structure_id'=>$id,
                     'input'=>$struc['input'],
                     'type'=>$struc['type'],
                     'is_require'=>(!isset($struc['is_require'])|| !($struc['is_require'])=='Required')?'Optional':'Required',
@@ -47,7 +47,7 @@ class TestStructure extends Model
         if(isset($request->structuresDesMenu)){
             foreach($request->structuresDesMenu as $type=>$struc){
                 TestStructure_description::updateOrcreate([
-                    'structure_id'=>$id,
+                    'test_structure_id'=>$id,
                     'input'=>$struc['input'],
                     'type'=>$struc['type'],
                     'is_require'=>(!isset($struc['is_require'])|| !($struc['is_require'])=='Required')?'Optional':'Required',
@@ -66,7 +66,7 @@ class TestStructure extends Model
     public static function UpdateOptionStruc(Request $request,$id)
     {
         $structure=TestStructure::findOrfail($id);
-        $structure->test_id=$request->test_id;
+        $structure->test_id=$request->option_id;
         $structure->name=$request->structureName;
         return $structure;
     }

@@ -11,14 +11,17 @@ use App\Models\TestWell;
 use App\Models\TestWell_data;
 use App\Models\Well;
 use App\Models\Well_data;
+
 use Illuminate\Support\Facades\Auth;
+
 use Illuminate\Support\Facades\Validator;
 
 class TestWellDataService implements TestWellDataServiceInterface
 {
-    public $well_data,$structure_description,$structure;
-    public function __construct(TestWell_data $well_data,TestStructure_description $structure_description,TestStructure $structure)
+    public $well,$well_data,$structure_description,$structure;
+    public function __construct(TestWell $well,TestWell_data $well_data,TestStructure_description $structure_description,TestStructure $structure)
     {
+        $this->well = $well;
         $this->well_data = $well_data;
         $this->structure_description = $structure_description;
         $this->structure = $structure;
@@ -29,134 +32,124 @@ class TestWellDataService implements TestWellDataServiceInterface
     //4-publish from dataWell already exist(edit)
 
     //3-publish from first time
-    public function publishNewTestWell($request,$published)
+    public function publishNewWell($request,$published)
     {
-        $well=Well::findOrFail($request->well_id)->first();
-        if($well){
-            $testWell=TestWell::create([
-                'well_id'=>$request->well_id,
-                'user_id'=>Auth::id(),
-                'published'=>($published=='published')?'published':'as_draft',
-            ]);
-            $testDataInputs= $request->json('test_data');
-            foreach($testDataInputs as $testDataInput){
-                if(isset($testDataInput['test_structure_description_id'])){
-                    $test_structure_desc=TestStructure_description::findOrfail($testDataInput['test_structure_description_id']);
-                    //(string&Int&Boolean) or List or Multitext
-                    $type=$test_structure_desc->type;
-                    if(($type == 'String') || ($type == 'Int') || ($type == 'Boolean') || ($type == 'List')){
-                        TestWell_data::createStringIntBoolList($testWell,$test_structure_desc->id,$testDataInput['data']);
-                    }elseif($type=='MultiText'){
-                        $data = [
-                            'pi' => $testDataInput['data']['Pi'],
-                            'Pd' => $testDataInput['data']['Pd'],
-                            'Ti' => $testDataInput['data']['Ti'],
-                            'Tm' => $testDataInput['data']['Tm'],
-                            'Ct' => $testDataInput['data']['Ct'],
-                        ];
-                        TestWell_data::createStringIntBoolList($testWell,$testDataInput['test_structure_description_id'],$data);
-                    }
-                }elseif(!isset($testDataInput['test_structure_description_id'])
-                        && isset($testDataInput['test_structure_id'])
-                        && isset($testDataInput['input']))
+        $well=$this->well->createWell($request,$published);
+        $wellDataInputs= $request->json('well_data');
+        foreach($wellDataInputs as $wellDataInput){
+            if(isset($wellDataInput['structure_description_id'])){
+                $structure_desc=$this->structure_description->findOrfail($wellDataInput['structure_description_id']);
+                //(string&Int&Boolean) or List or Multitext
+                $type=$structure_desc->type;
+                if(($type == 'String') || ($type == 'Int') || ($type == 'Boolean') || ($type == 'List')){
+                    $this->well_data->createStringIntBoolList($well,$structure_desc->id,$wellDataInput['data']);
+                }elseif($type=='MultiText'){
+                    $data = [
+                        'pi' => $wellDataInput['data']['Pi'],
+                        'Pd' => $wellDataInput['data']['Pd'],
+                        'Ti' => $wellDataInput['data']['Ti'],
+                        'Tm' => $wellDataInput['data']['Tm'],
+                        'Ct' => $wellDataInput['data']['Ct'],
+                    ];
+                    $this->well_data->createStringIntBoolList($well,$wellDataInput['structure_description_id'],$data);
+                }
+            }elseif(!isset($wellDataInput['structure_description_id']) && isset($wellDataInput['structure_id']) && isset($wellDataInput['input']))
+            {
+                //date && multitext
+                $this->structure->findOrfail($wellDataInput['structure_id']);
+                $validator = Validator::make(['input' => $wellDataInput['input']], ['input' => 'date']);
+                if($validator->fails())
                 {
-                    //date && multitext
-                    TestStructure::findOrfail($testDataInput['test_structure_id']);
-                    $validator = Validator::make(['input' => $testDataInput['input']], ['input' => 'date']);
-                    if($validator->fails())
-                    {
-                        TestWell_data::createMultiTextWithInput($testDataInput,$testWell);
-                    }else{
-                        TestWell_data::createDateInputWithData($testDataInput,$testWell);
-                    }
+                    $this->well_data->createMultiTextWithInput($wellDataInput,$well);
+                }else{
+                    $this->well_data->createDateInputWithData($wellDataInput,$well);
                 }
             }
         }
     }
 
     //4-publish from dataWell already exist(edit)
-    public function publishOldTestWell($request,$published)
+    public function publishOldWell($request,$published)
     {
-        $test_well=TestWell::findOrFail($request->test_well_id)->first();
-        $test_well_data=TestWell_data::with('Structure_description')->where('test_well_id',$request->test_well_id)->get();
-        TestWell::updateWell($test_well,$published);
-        $testDataInputs= $request->json('test_data');
+        $well=$this->well->where('id',$request->well_id)->findOrfail($request->well_id);
+        $well_data=$this->well_data->with('Structure_description')->where('well_id',$request->well_id)->get();
+        $this->well->updateWell($well,$request,$published);
+        $wellDataInputs= $request->json('well_data');
 
-        if(!empty($testDataInputs)){
-            foreach($testDataInputs as $testDataInput){
+        if(!empty($wellDataInputs)){
+            foreach($wellDataInputs as $wellDataInput){
                 //for edit old data
-                if(isset($testDataInput['test_well_data_id'])){
-                    $test_well_data_id=$testDataInput['test_well_data_id'];
-                    $test_well_data=TestWell_data::with('Structure_description')->where('id',$test_well_data_id)->first();
-                    $type=$test_well_data->Structure_description->type;
-                    if(!isset($testDataInput['input'])){
+                if(isset($wellDataInput['well_data_id'])){
+                $well_data_id=$wellDataInput['well_data_id'];
+                    $well_data=$this->well_data->with('Structure_description')->where('id',$well_data_id)->first();
+                    $type=$well_data->Structure_description->type;
+                    if(!isset($wellDataInput['input'])){
                         if(($type == 'String') || ($type == 'Int') || ($type == 'Boolean') || ($type=='List')){
-                            $test_well_data->update([
-                                'data'=>json_encode($testDataInput['data'])
+                            $well_data->update([
+                                'data'=>json_encode($wellDataInput['data'])
                             ]);
                         }elseif($type=='MultiText'){
                                 $data = [
-                                    'pi' => $testDataInput['data']['Pi'],
-                                    'Pd' => $testDataInput['data']['Pd'],
-                                    'Ti' => $testDataInput['data']['Ti'],
-                                    'Tm' => $testDataInput['data']['Tm'],
-                                    'Ct' => $testDataInput['data']['Ct'],
+                                    'pi' => $wellDataInput['data']['Pi'],
+                                    'Pd' => $wellDataInput['data']['Pd'],
+                                    'Ti' => $wellDataInput['data']['Ti'],
+                                    'Tm' => $wellDataInput['data']['Tm'],
+                                    'Ct' => $wellDataInput['data']['Ct'],
                                 ];
-                                $test_well_data->update([
+                                $well_data->update([
                                     'data'=>json_encode($data)
                                 ]);
                         }
                     }else{
                         if($type=='MultiText'){
                             $data = [
-                                'pi' => $testDataInput['data']['Pi'],
-                                'Pd' => $testDataInput['data']['Pd'],
-                                'Ti' => $testDataInput['data']['Ti'],
-                                'Tm' => $testDataInput['data']['Tm'],
-                                'Ct' => $testDataInput['data']['Ct'],
+                                'pi' => $wellDataInput['data']['Pi'],
+                                'Pd' => $wellDataInput['data']['Pd'],
+                                'Ti' => $wellDataInput['data']['Ti'],
+                                'Tm' => $wellDataInput['data']['Tm'],
+                                'Ct' => $wellDataInput['data']['Ct'],
                             ];
-                            $test_well_data->update([
-                                'input'=>json_encode($testDataInput['input']),
+                            $well_data->update([
+                                'input'=>json_encode($wellDataInput['input']),
                                 'data'=>json_encode($data)
                             ]);
                         }else{
-                            $test_well_data->update([
-                                'input'=>json_encode($testDataInput['input']),
-                                'data'=>json_encode($testDataInput['data'])
+                            $well_data->update([
+                                'input'=>json_encode($wellDataInput['input']),
+                                'data'=>json_encode($wellDataInput['data'])
                             ]);
                         }
                     }
                 }
                 //for store new data
-                elseif(!isset($testDataInput['test_well_data_id'])){
-                    if(isset($testDataInput['test_structure_description_id'])){
-                        $test_structure_desc=TestStructure_description::findOrfail($testDataInput['test_structure_description_id']);
+
+                elseif(!isset($wellDataInput['well_data_id'])){
+                    if(isset($wellDataInput['structure_description_id'])){
+                        $structure_desc=$this->structure_description->findOrfail($wellDataInput['structure_description_id']);
                         //(string&Int&Boolean) or List or Multitext
-                        $type=$test_structure_desc->type;
+                        $type=$structure_desc->type;
                         if(($type == 'String') || ($type == 'Int') || ($type == 'Boolean') || ($type == 'List')){
-                            TestWell_data::createStringIntBoolList($test_well,$test_structure_desc->id,$testDataInput['data']);
+                            $this->well_data->createStringIntBoolList($well,$structure_desc->id,$wellDataInput['data']);
                         }elseif($type=='MultiText'){
                             $data = [
-                                'pi' => $testDataInput['data']['Pi'],
-                                'Pd' => $testDataInput['data']['Pd'],
-                                'Ti' => $testDataInput['data']['Ti'],
-                                'Tm' => $testDataInput['data']['Tm'],
-                                'Ct' => $testDataInput['data']['Ct'],
+                                'pi' => $wellDataInput['data']['Pi'],
+                                'Pd' => $wellDataInput['data']['Pd'],
+                                'Ti' => $wellDataInput['data']['Ti'],
+                                'Tm' => $wellDataInput['data']['Tm'],
+                                'Ct' => $wellDataInput['data']['Ct'],
                             ];
-                            TestWell_data::createStringIntBoolList($test_well,$testDataInput['test_structure_description_id'],$data);
+                            $this->well_data->createStringIntBoolList($well,$wellDataInput['structure_description_id'],$data);
                         }
-                    }elseif(!isset($testDataInput['test_structure_description_id'])
-                        && isset($testDataInput['test_structure_id'])
-                        && isset($testDataInput['input']))
+                    }elseif(!isset($wellDataInput['structure_description_id']) && isset($wellDataInput['structure_id']) && isset($wellDataInput['input']))
                     {
                         //date && multitext
-                        TestStructure::findOrfail($testDataInput['test_structure_id']);
-                        $validator = Validator::make(['input' => $testDataInput['input']], ['input' => 'date']);
+                        $this->structure->findOrfail($wellDataInput['structure_id']);
+                        $validator = Validator::make(['input' => $wellDataInput['input']], ['input' => 'date']);
                         if($validator->fails())
                         {
-                            $this->well_data->createMultiTextWithInput($testDataInput,$test_well);
+                            $this->well_data->createMultiTextWithInput($wellDataInput,$well);
                         }else{
-                            $this->well_data->createDateInputWithData($testDataInput,$test_well);
+                            $this->well_data->createDateInputWithData($wellDataInput,$well);
                         }
                     }
                 }
@@ -167,10 +160,9 @@ class TestWellDataService implements TestWellDataServiceInterface
 
     public function requestToEdit($request,$published,$wellRequest)
     {
-        // $well=TestWell::where('id',$wellRequest->well_id)->first();
-        $well_data=$this->well_data->with('Structure_description')
-                        ->where('test_well_id',$wellRequest->test_well_id)->get();
-        // TestWell::updateWell($well,$published);
+        $well=$this->well->where('id',$wellRequest->well_id)->first();
+        $well_data=$this->well_data->with('Structure_description')->where('test_well_id',$wellRequest->well_id)->get();
+        $this->well->updateWell($well,$request,$published);
         $wellDataInputs= $request->json('well_data');
 
         if(!empty($wellDataInputs)){
@@ -218,6 +210,37 @@ class TestWellDataService implements TestWellDataServiceInterface
                         }
                     }
                 }
+                //for store new data
+                // elseif(!isset($wellDataInput['well_data_id'])){
+                //     if(isset($wellDataInput['structure_description_id'])){
+                //         $structure_desc=$this->structure_description->findOrfail($wellDataInput['structure_description_id']);
+                //         //(string&Int&Boolean) or List or Multitext
+                //         $type=$structure_desc->type;
+                //         if(($type == 'String') || ($type == 'Int') || ($type == 'Boolean') || ($type == 'List')){
+                //             $this->well_data->createStringIntBoolList($well,$structure_desc->id,$wellDataInput['data']);
+                //         }elseif($type=='MultiText'){
+                //             $data = [
+                //                 'pi' => $wellDataInput['data']['Pi'],
+                //                 'Pd' => $wellDataInput['data']['Pd'],
+                //                 'Ti' => $wellDataInput['data']['Ti'],
+                //                 'Tm' => $wellDataInput['data']['Tm'],
+                //                 'Ct' => $wellDataInput['data']['Ct'],
+                //             ];
+                //             $this->well_data->createStringIntBoolList($well,$wellDataInput['structure_description_id'],$data);
+                //         }
+                //     }elseif(!isset($wellDataInput['structure_description_id']) && isset($wellDataInput['structure_id']) && isset($wellDataInput['input']))
+                //     {
+                //         //date && multitext
+                //         $this->structure->findOrfail($wellDataInput['structure_id']);
+                //         $validator = Validator::make(['input' => $wellDataInput['input']], ['input' => 'date']);
+                //         if($validator->fails())
+                //         {
+                //             $this->well_data->createMultiTextWithInput($wellDataInput,$well);
+                //         }else{
+                //             $this->well_data->createDateInputWithData($wellDataInput,$well);
+                //         }
+                //     }
+                // }
             }
         }
     }

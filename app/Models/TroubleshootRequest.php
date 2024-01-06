@@ -17,7 +17,7 @@ class TroubleshootRequest extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function troubleshoot_well()
+    public function well()
     {
         return $this->belongsTo(TroubleshootWell::class);
     }

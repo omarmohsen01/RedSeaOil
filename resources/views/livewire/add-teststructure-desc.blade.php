@@ -1,5 +1,6 @@
 <div>
-    <form class="row g-3" method="POST" action="{{ route('testsstructures.store') }}" style="width: 1200px;">
+
+    <form class="row g-3" method="POST" action="{{ route('teststructures.store') }}" style="width: 1200px;">
         @csrf
 
         <label>Option Name</label>

@@ -38,7 +38,13 @@ Route::group(['middleware'=>'auth:sanctum'],function(){
 
     Route::post('wellsData/saveDraft',[WellDataController::class,'saveDraft']);
 
+
     Route::apiResource('wellsData',WellDataController::class);
+    Route::apiResource('survey-welldata',SurveyWellDataController::class);
+    Route::apiResource('test-welldata',TestWellDataController::class);
+    Route::apiResource('troubleshoot-welldata',TroubleshootWellDataController::class);
+
+
 
     Route::get('wells/userWells',[WellController::class,'userWell']);
     Route::get('wells/userSurveyWells',[SurveyWellController::class,'userWell']);
@@ -46,6 +52,10 @@ Route::group(['middleware'=>'auth:sanctum'],function(){
     Route::get('wells/userTroubleshootWells',[TroubleshootWellController::class,'userWell']);
 
     Route::get('wells/generatePDF/{id}',[WellController::class,'generatePDF']);
+    Route::get('surveywells/generatePDF/{id}',[SurveyWellController::class,'generatePDF']);
+    Route::get('testwells/generatePDF/{id}',[TestWellController::class,'generatePDF']);
+    Route::get('troubleshootwells/generatePDF/{id}',[TroubleshootWellController::class,'generatePDF']);
+
 
     Route::apiResource('wells',WellController::class);
     Route::apiResource('surveywells',SurveyWellController::class);

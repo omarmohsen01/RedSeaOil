@@ -32,26 +32,46 @@
                         <x-nav-link class="special-link focus:outline-none" style="margin-top: 20.4px" :active="request()->routeIs('users.index')">
                             {{ __('Options') }}
                         </x-nav-link>
-                        <div class="absolute hidden mt-2 space-y-4 bg-white border border-gray-100 group-hover:block m-0 min-w-max list-none overflow-hidden z-50">
-                            <a href="{{ route('optionStructures.index') }}" class="block px-4 py-2 text-gray-800 hover:bg-gray-200">Operations</a>
-                            <a href="{{ route('surveys.index') }}" class="block px-4 py-2 text-gray-800 hover:bg-gray-200">Well Surveys</a>
-                            <a href="{{ route('tests.index') }}" class="block px-4 py-2 text-gray-800 hover:bg-gray-200">Tests</a>
-                            <a href="{{ route('troubleshoots.index') }}" class="block px-4 py-2 text-gray-800 hover:bg-gray-200">Troubleshoot</a>
+                        <div class="relative group">
+                            <x-nav-link class="special-link focus:outline-none" style="margin-top: 20.4px" :active="request()->routeIs('users.index')">
+                                {{ __('Options') }}
+                            </x-nav-link>
+                            <div class="absolute hidden mt-2 space-y-4 bg-white border border-gray-100 group-hover:block m-0 min-w-max list-none overflow-hidden z-50">
+                                <a href="{{ route('optionStructures.index') }}" class="block px-4 py-2 text-gray-800 hover:bg-gray-200">Operations</a>
+                                <a href="{{ route('surveys.index') }}" class="block px-4 py-2 text-gray-800 hover:bg-gray-200">Well Surveys</a>
+                                <a href="{{ route('tests.index') }}" class="block px-4 py-2 text-gray-800 hover:bg-gray-200">Tests</a>
+                                <a href="{{ route('troubleshoots.index') }}" class="block px-4 py-2 text-gray-800 hover:bg-gray-200">Troubleshoot</a>
+                            </div>
                         </div>
                     </div>
                     </div>
 
-
                 @endif
                 <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                    <x-nav-link href="{{ route('wells.index') }}" :active="request()->routeIs('wells.index')">
-                        {{ __('Wells') }}
-                    </x-nav-link>
+                    <div class="relative group">
+                        <x-nav-link class="special-link focus:outline-none" style="margin-top: 20.4px" :active="request()->routeIs('wells.index')">
+                            {{ __('Wells') }}
+                        </x-nav-link>
+                        <div class="absolute hidden mt-2 space-y-4 bg-white border border-gray-100 group-hover:block m-0 min-w-max list-none overflow-hidden z-50">
+                            <a href="{{ route('wells.index') }}" class="block px-4 py-2 text-gray-800 hover:bg-gray-200">Operation Wells</a>
+                            <a href="{{ route('surveywells.index') }}" class="block px-4 py-2 text-gray-800 hover:bg-gray-200">Survey Wells</a>
+                            <a href="{{ route('testwells.index') }}" class="block px-4 py-2 text-gray-800 hover:bg-gray-200">Test Wells</a>
+                            <a href="{{ route('troubleshootwells.index') }}" class="block px-4 py-2 text-gray-800 hover:bg-gray-200">Troubleshoot Wells</a>
+                        </div>
+                    </div>
                 </div>
                 <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                    <x-nav-link href="{{ route('requests.index') }}" :active="request()->routeIs('requests.index')">
-                        {{ __('requests') }}
-                    </x-nav-link>
+                    <div class="relative group">
+                        <x-nav-link class="special-link focus:outline-none" style="margin-top: 20.4px" :active="request()->routeIs('requests.index')">
+                            {{ __('Requests') }}
+                        </x-nav-link>
+                        <div class="absolute hidden mt-2 space-y-4 bg-white border border-gray-100 group-hover:block m-0 min-w-max list-none overflow-hidden z-50">
+                            <a href="{{ route('requests.index') }}" class="block px-4 py-2 text-gray-800 hover:bg-gray-200">Operation Wells Requests</a>
+                            <a href="{{ route('surveyrequests.index') }}" class="block px-4 py-2 text-gray-800 hover:bg-gray-200">Survey Wells Requests</a>
+                            <a href="{{ route('testrequests.index') }}" class="block px-4 py-2 text-gray-800 hover:bg-gray-200">Test Wells Requests</a>
+                            <a href="{{ route('troubleshootrequests.index') }}" class="block px-4 py-2 text-gray-800 hover:bg-gray-200">Troubleshoot Wells Requests</a>
+                        </div>
+                    </div>
                 </div>
             </div>
 

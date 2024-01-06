@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Front;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Interfaces\Front\TroubleshootWellDataServiceInterface;
 use App\Http\Controllers\Interfaces\Front\WellDataServiceInterface;
+use App\Http\Requests\PublishTroubleshootWellRequest;
 use App\Http\Requests\PublishWellRequest;
 use App\Models\Request as ModelsRequest;
 use App\Models\Structure;
@@ -22,10 +23,14 @@ use Throwable;
 
 class TroubleshootWellDataController extends Controller
 {
-    public $troubleshootWellDataService;
-    public function __construct(TroubleshootWellDataServiceInterface $troubleshootWellDataService)
+    public $well,$well_data,$structure,$structure_description,$wellDataService;
+    public function __construct(TroubleshootWell $well,TroubleshootWell_data $well_data,TroubleshootStructure $structure,TroubleshootStructure_description $structure_description,TroubleshootWellDataServiceInterface $wellDataService)
     {
-        $this->troubleshootWellDataService=$troubleshootWellDataService;
+        $this->well=$well;
+        $this->well_data=$well_data;
+        $this->wellDataService=$wellDataService;
+        $this->structure=$structure;
+        $this->structure_description=$structure_description;
     }
     /**
      * Display a listing of the resource.
@@ -35,15 +40,15 @@ class TroubleshootWellDataController extends Controller
 
     }
 
-    public function store(Request $request)
+    public function store(PublishTroubleshootWellRequest $request)
     {
         try{
-            if(isset($request->troubleshoot_well_id)){
-                $this->troubleshootWellDataService->publishOldTroubleshootWell($request,'published');
-                return response()->json(['message' => 'TruobleShoot Well Created Successfully'], 200);
+            if(isset($request->well_id)){
+                $this->wellDataService->publishOldWell($request,'published');
+                return response()->json(['message' => 'Well Created Successfully'], 200);
             }else{
-                $this->troubleshootWellDataService->publishNewTroubleshootWell($request,'published');
-                return response()->json(['message' => 'TruobleShoot Well Created Successfully'], 200);
+                $this->wellDataService->publishNewWell($request,'published');
+                return response()->json(['message' => 'Well Created Successfully'], 200);
             }
         }catch (Throwable $e) {
             DB::rollBack();
@@ -64,6 +69,17 @@ class TroubleshootWellDataController extends Controller
         //         }
         //         return response()->json($well_data,200);
         // }
+        $well=$this->well->where('id',$id)->where('published','as_draft')->first();
+        if(!$well){
+            return response()->json(['message'=> 'this well is already published'],404);
+        }else{
+            $well_data=$this->well_data->where('well_id',$well->id)
+                ->with(['well','Structure_description'])->get();
+                if(!$well_data){
+                    return response()->json(['message' => 'Well Not Found'], 404);
+                }
+                return response()->json($well_data,200);
+        }
     }
 
     /**
@@ -74,7 +90,7 @@ class TroubleshootWellDataController extends Controller
         $wellRequest=TroubleshootRequest::with('troubleshoot_well.well_data')->where('id',$id)->where('status','accept')->first();
         if($wellRequest)
         {
-            $this->troubleshootWellDataService->requestToEdit($request,'published',$wellRequest);
+            $this->wellDataService->requestToEdit($request,'published',$wellRequest);
             $wellRequest->delete();
             return response()->json(['message' => 'Well Updated Successfully'], 200);
         }else{
@@ -90,15 +106,16 @@ class TroubleshootWellDataController extends Controller
     {
         //
     }
-    public function saveDraft(Request $request)
+
+    public function saveDraft(PublishTroubleshootWellRequest $request)
     {
         try{
-            if(isset($request->troubleshoot_well_id)){
-                $this->troubleshootWellDataService->publishOldTroubleshootWell($request,'as_draft');
-                return response()->json(['message' => 'TruobleShoot Well Created Successfully'], 200);
+            if(isset($request->well_id)){
+                $this->wellDataService->publishOldWell($request,'as_draft');
+                return response()->json(['message' => 'Well Created Successfully'], 200);
             }else{
-                $this->troubleshootWellDataService->publishNewTroubleshootWell($request,'as_draft');
-                return response()->json(['message' => 'TruobleShoot Well Created Successfully'], 200);
+                $this->wellDataService->publishNewWell($request,'as_draft');
+                return response()->json(['message' => 'Well Created Successfully'], 200);
             }
         }catch (Throwable $e) {
             DB::rollBack();

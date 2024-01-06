@@ -18,6 +18,7 @@ return new class extends Migration
             $table->date('to');
             $table->string('well')->nullable();
             $table->string('rig')->nullable();
+            $table->string('images');
             $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
             $table->enum('published', ['published','as_draft','last_draft'])->default('as_draft');
             $table->timestamps();

@@ -8,6 +8,12 @@ use App\Http\Controllers\Interfaces\Dashboard\StructureServiceInterface;
 use App\Http\Controllers\Interfaces\Dashboard\SurveyServiceInterface;
 use App\Http\Controllers\Interfaces\Dashboard\TestServiceInterface;
 use App\Http\Controllers\Interfaces\Dashboard\TroubleshootServiceInterface;
+use App\Http\Controllers\Interfaces\Dashboard\SurveyStructureDescServiceInterface;
+use App\Http\Controllers\Interfaces\Dashboard\SurveyStructureServiceInterface;
+use App\Http\Controllers\Interfaces\Dashboard\TestStructureDescServiceInterface;
+use App\Http\Controllers\Interfaces\Dashboard\TestStructureServiceInterface;
+use App\Http\Controllers\Interfaces\Dashboard\TroubleshootStructureDescServiceInterface;
+use App\Http\Controllers\Interfaces\Dashboard\TroubleshootStructureServiceInterface;
 use App\Http\Controllers\Interfaces\Dashboard\UserServiceInterface;
 use App\Http\Controllers\Interfaces\Front\OptionServiceInterface;
 use App\Http\Controllers\Interfaces\Front\StructureDescServiceInterface as FrontStructureDescServiceInterface;
@@ -22,6 +28,12 @@ use App\Http\Controllers\Services\Dashboard\StructureService;
 use App\Http\Controllers\Services\Dashboard\SurveyService;
 use App\Http\Controllers\Services\Dashboard\TestService;
 use App\Http\Controllers\Services\Dashboard\TroubleshootService;
+use App\Http\Controllers\Services\Dashboard\SurveyStructureDescService;
+use App\Http\Controllers\Services\Dashboard\SurveyStructureService;
+use App\Http\Controllers\Services\Dashboard\TestStructureDescService;
+use App\Http\Controllers\Services\Dashboard\TestStructureService;
+use App\Http\Controllers\Services\Dashboard\TroubleshootStructureDescService;
+use App\Http\Controllers\Services\Dashboard\TroubleshootStructureService;
 use App\Http\Controllers\Services\Dashboard\UserService;
 use App\Http\Controllers\Services\Front\OptionService;
 use App\Http\Controllers\Services\Front\StructureDescService as FrontStructureDescService;
@@ -49,12 +61,25 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(FrontStructureServiceInterface::class, FrontStructureService::class);
         $this->app->bind(FrontStructureDescServiceInterface::class,FrontStructureDescService::class);
         $this->app->bind(WellDataServiceInterface::class,WellDataService::class);
+        $this->app->bind(SurveyWellDataServiceInterface::class,SurveyWellDataService::class);
+        $this->app->bind(TestWellDataServiceInterface::class,TestWellDataService::class);
+        $this->app->bind(TroubleshootWellDataServiceInterface::class,TroubleshootWellDataService::class);
         $this->app->bind(SurveyServiceInterface::class,SurveyService::class);
         $this->app->bind(TestServiceInterface::class,TestService::class);
         $this->app->bind(TroubleshootServiceInterface::class,TroubleshootService::class);
         $this->app->bind(SurveyWellDataServiceInterface::class,SurveyWellDataService::class);
         $this->app->bind(TestWellDataServiceInterface::class,TestWellDataService::class);
         $this->app->bind(TroubleshootWellDataServiceInterface::class,TroubleshootWellDataService::class);
+        $this->app->bind(SurveyStructureServiceInterface::class,SurveyStructureService::class);
+        $this->app->bind(TestStructureServiceInterface::class,TestStructureService::class);
+        $this->app->bind(TroubleshootStructureServiceInterface::class,TroubleshootStructureService::class);
+        $this->app->bind(SurveyStructureDescServiceInterface::class,SurveyStructureDescService::class);
+        $this->app->bind(TestStructureDescServiceInterface::class,TestStructureDescService::class);
+        $this->app->bind(TroubleshootStructureDescServiceInterface::class,TroubleshootStructureDescService::class);
+
+
+
+
     }
 
     /**

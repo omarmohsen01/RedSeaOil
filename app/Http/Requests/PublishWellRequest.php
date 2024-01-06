@@ -29,6 +29,8 @@ class PublishWellRequest extends FormRequest
                 'name'=>'required|string|max:255|unique:wells,name',
                 'from'=>'required|date|after_or_equal:today',
                 'to'=>'required|date|after:from',
+                'images.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+
                 'well_data'=>'required',
                 'well_data.*.structure_description_id'=>'exists:structure_descriptions,id',
                 'well_data.*.structure_id'=>'exists:structures,id'
@@ -57,19 +59,19 @@ class PublishWellRequest extends FormRequest
                 'well_data.*.structure_description_id'=>'exists:structure_descriptions,id',
                 'well_data.*.structure_id'=>'exists:structures,id'
             ];
-            // $wellDataInputs = $this->json('well_data');
-            // foreach ($wellDataInputs as $key => $wellDataInput) {
-            //     if (isset($wellDataInput['structure_description_id'])) {
-            //         $structure_desc = Structure_description::findOrFail(
-            //             $wellDataInput['structure_description_id']);
-            //         if ($structure_desc->is_require == 'Required') {
-            //             $rules["well_data.{$key}.data"] = 'sometimes|required';
-            //         }
-            //         // if(!empty($structure_desc->data)){
-            //         //     $rules["well_data.{key}.data"]="sometimes|exists:structure_descriptions,data";
-            //         // }
-            //     }
-            // }
+             $wellDataInputs = $this->json('well_data');
+             foreach ($wellDataInputs as $key => $wellDataInput) {
+                 if (isset($wellDataInput['structure_description_id'])) {
+                     $structure_desc = Structure_description::findOrFail(
+                         $wellDataInput['structure_description_id']);
+                     if ($structure_desc->is_require == 'Required') {
+                         $rules["well_data.{$key}.data"] = 'sometimes|required';
+                     }
+                     // if(!empty($structure_desc->data)){
+                     //     $rules["well_data.{key}.data"]="sometimes|exists:structure_descriptions,data";
+                     // }
+                 }
+             }
         }
         return $rules;
 

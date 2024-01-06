@@ -10,7 +10,6 @@ use Illuminate\Support\Facades\Auth;
 class TroubleshootWell_data extends Pivot
 {
     use HasFactory;
-
     protected $table="troubleshoot_well_data";
     public $incrementing = true;
     protected $fillable=[
@@ -26,32 +25,34 @@ class TroubleshootWell_data extends Pivot
         return $this->belongsTo(TroubleshootWell::class,'troubleshoot_well_id');
     }
 
-    public static function createStringIntBoolList($troubleshootWell,$wellDataInput,$data)
+
+    public static function createStringIntBoolList($well,$wellDataInput,$data)
     {
         TroubleshootWell_data::create([
-            'troubleshoot_well_id'=>$troubleshootWell->id,
+            'troubleshoot_well_id'=>$well->id,
             'troubleshoot_struct_desc_id'=> $wellDataInput,
             'data'=> json_encode($data)
         ]);
     }
 
-    public static function createMultiTextWithInput($troubleshootWellDataInput,$troubleshootWell)
+
+    public static function createMultiTextWithInput($wellDataInput,$well)
     {
         $data = [
-            'pi' => $troubleshootWellDataInput['data']['Pi'],
-            'Pd' => $troubleshootWellDataInput['data']['Pd'],
-            'Ti' => $troubleshootWellDataInput['data']['Ti'],
-            'Tm' => $troubleshootWellDataInput['data']['Tm'],
-            'Ct' => $troubleshootWellDataInput['data']['Ct'],
+            'pi' => $wellDataInput['data']['Pi'],
+            'Pd' => $wellDataInput['data']['Pd'],
+            'Ti' => $wellDataInput['data']['Ti'],
+            'Tm' => $wellDataInput['data']['Tm'],
+            'Ct' => $wellDataInput['data']['Ct'],
         ];
         $struct_desc=TroubleshootStructure_description::create([
-            'troubleshoot_struct_id'=>$troubleshootWellDataInput['structure_id'],
-            'input'=>$troubleshootWellDataInput['input'],
+            'troubleshoot_struct_id'=>$wellDataInput['structure_id'],
+            'input'=>$wellDataInput['input'],
             'type'=>'MultiText',
             'user_id'=> Auth::guard('sanctum')->id()
         ]);
         TroubleshootWell_data::create([
-            'troubleshoot_well_id'=>$troubleshootWell->id,
+            'troubleshoot_well_id'=>$well->id,
             'troubleshoot_struct_desc_id'=>$struct_desc->id,
             'data' => json_encode($data)
         ]);

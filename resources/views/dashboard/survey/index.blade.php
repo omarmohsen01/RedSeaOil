@@ -36,7 +36,7 @@
                                 <tr class="sortable-item" data-id="{{ $structure->id }}">
                                     <td colspan=""><a href="">{{ $structure->name }}</a></td>
                                     <td colspan="">
-                                        <a href="{{ route('structuresDesc.edit',$structure->id) }}"><span class="material-symbols-outlined">edit</span></a>
+                                        <a href="{{ route('surveystructuresdesc.edit',$structure->id) }}"><span class="material-symbols-outlined">edit</span></a>
                                         <a href="{{ route('surveyStructure.delete',$structure->id) }}"><span class="material-symbols-outlined">delete</span></a>
                                     </td>
                                 </tr>
